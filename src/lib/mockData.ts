@@ -11,6 +11,8 @@ export interface Flight {
     stops: number;
     aircraft: string;
     status: 'On Time' | 'Delayed' | 'Cancelled';
+    originCity?: string;
+    destinationCity?: string;
 }
 
 export const mockFlights: Flight[] = [

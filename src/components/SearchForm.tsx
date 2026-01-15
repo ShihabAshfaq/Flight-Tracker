@@ -9,7 +9,11 @@ interface SearchFormProps {
         destination: string;
         date: string;
         maxPrice?: number;
+        minPrice?: number;
         stops?: string;
+        status?: string;
+        minDuration?: number;
+        maxDuration?: number;
         flightCode?: string;
         sortBy?: string;
     }) => void;
@@ -26,7 +30,11 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
     // Advanced Filters
     const [showFilters, setShowFilters] = useState(false);
     const [maxPrice, setMaxPrice] = useState<number>(2000);
+    const [minPrice, setMinPrice] = useState<number>(0);
+    const [minDuration, setMinDuration] = useState<number>(0);
+    const [maxDuration, setMaxDuration] = useState<number>(24);
     const [stops, setStops] = useState("any");
+    const [status, setStatus] = useState("");
     const [filterFlightCode, setFilterFlightCode] = useState(""); // For "Route" mode optional filter
     const [sortBy, setSortBy] = useState("price_asc");
 
@@ -38,7 +46,11 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
                 destination,
                 date,
                 maxPrice: showFilters ? maxPrice : undefined,
+                minPrice: showFilters ? minPrice : undefined,
                 stops: showFilters ? stops : undefined,
+                status: showFilters ? status : undefined,
+                minDuration: showFilters ? minDuration * 60 : undefined, // Convert hours to minutes
+                maxDuration: showFilters ? maxDuration * 60 : undefined,
                 flightCode: showFilters ? filterFlightCode : undefined,
                 sortBy: showFilters ? sortBy : undefined
             });
@@ -174,6 +186,64 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
 
                         {showFilters && (
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 animate-in slide-in-from-top-2 duration-200">
+                                {/* Price Range */}
+                                <div className="flex flex-col gap-1">
+                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Price Range</label>
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex-1">
+                                            <label className="text-[10px] text-gray-400">Min ($)</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                value={minPrice}
+                                                onChange={(e) => setMinPrice(Number(e.target.value))}
+                                                className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                        <div className="flex-1">
+                                            <label className="text-[10px] text-gray-400">Max ($)</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                value={maxPrice}
+                                                onChange={(e) => setMaxPrice(Number(e.target.value))}
+                                                className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                                                placeholder="2000"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Duration Range */}
+                                <div className="flex flex-col gap-1">
+                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Duration (Hrs)</label>
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex-1">
+                                            <label className="text-[10px] text-gray-400">Min</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                value={minDuration}
+                                                onChange={(e) => setMinDuration(Number(e.target.value))}
+                                                className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                        <div className="flex-1">
+                                            <label className="text-[10px] text-gray-400">Max</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                value={maxDuration}
+                                                onChange={(e) => setMaxDuration(Number(e.target.value))}
+                                                className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                                                placeholder="24"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {/* Flight Code Filter in Route Mode */}
                                 <div className="flex flex-col gap-1">
                                     <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Airline / Code</label>
@@ -200,22 +270,6 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
                                     </select>
                                 </div>
 
-                                {/* Max Price */}
-                                <div className="flex flex-col gap-1">
-                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex justify-between">
-                                        <span>Max Price</span>
-                                        <span className="text-blue-600">${maxPrice}</span>
-                                    </label>
-                                    <input
-                                        type="range"
-                                        min="0"
-                                        max="5000"
-                                        step="50"
-                                        value={maxPrice}
-                                        onChange={(e) => setMaxPrice(Number(e.target.value))}
-                                        className="w-full accent-blue-600 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-2"
-                                    />
-                                </div>
 
                                 {/* Sort By */}
                                 <div className="flex flex-col gap-1">
@@ -228,6 +282,23 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
                                         <option value="price_asc">Price: Low to High</option>
                                         <option value="duration_asc">Duration: Shortest</option>
                                         <option value="departure_asc">Departure: Earliest</option>
+                                    </select>
+                                </div>
+                                {/* Status */}
+                                <div className="flex flex-col gap-1">
+                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</label>
+                                    <select
+                                        value={status}
+                                        onChange={(e) => setStatus(e.target.value)}
+                                        className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm appearance-none"
+                                    >
+                                        <option value="">Any Status</option>
+                                        <option value="active">Active</option>
+                                        <option value="scheduled">Scheduled</option>
+                                        <option value="landed">Landed</option>
+                                        <option value="cancelled">Cancelled</option>
+                                        <option value="incident">Incident</option>
+                                        <option value="diverted">Diverted</option>
                                     </select>
                                 </div>
                             </div>

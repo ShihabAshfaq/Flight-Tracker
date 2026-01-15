@@ -1,6 +1,6 @@
 "use client";
 
-import { Flight } from "@/lib/mockData";
+import { Flight } from "@/lib/types";
 import { X, Plane, Clock, Calendar, CheckCircle, AlertTriangle, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -51,13 +51,15 @@ export default function FlightDetails({ flight, onClose }: FlightDetailsProps) {
                         <div className="flex justify-between items-end relative z-10">
                             <div>
                                 <h2 className="text-4xl font-bold">{flight.origin.split(" ")[0]}</h2>
+                                <div className="text-sm font-medium text-blue-200 mt-1">{flight.originCity}</div>
                                 <div className="text-blue-100 mt-1" suppressHydrationWarning>{new Date(flight.departureTime).toLocaleDateString()}</div>
                             </div>
-                            <div className="pb-2">
-                                <Plane className="w-6 h-6 rotate-90" />
+                            <div className="pb-6">
+                                <Plane className="w-6 h-6 rotate-90 text-blue-300" />
                             </div>
                             <div className="text-right">
                                 <h2 className="text-4xl font-bold">{flight.destination.split(" ")[0]}</h2>
+                                <div className="text-sm font-medium text-blue-200 mt-1">{flight.destinationCity}</div>
                                 <div className="text-blue-100 mt-1" suppressHydrationWarning>{new Date(flight.arrivalTime).toLocaleDateString()}</div>
                             </div>
                         </div>
