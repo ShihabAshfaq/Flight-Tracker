@@ -88,10 +88,10 @@ export default function Home() {
         <div className="relative z-10 w-full max-w-6xl px-6 flex flex-col gap-8">
           <div className="text-center text-white mb-4">
             <h1 className="text-5xl font-extrabold tracking-tight mb-4">
-              Track your next journey
+              SkyLedger: Track your next journey
             </h1>
             <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-              Real-time flight status, detailed schedules, and seamless tracking for travelers worldwide.
+              SkyLedger provides real-time flight status, detailed schedules, and seamless tracking for travelers worldwide.
             </p>
           </div>
 
